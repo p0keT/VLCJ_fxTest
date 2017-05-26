@@ -1,0 +1,29 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="vpfx2_2">
+    <output-path>$PROJECT_DIR$/out/artifacts/vpfx2_2</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="app.VLCPlayerLauncher" />
+        <option name="description" value="" />
+        <option name="htmlParamFile" value="" />
+        <option name="paramFile" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="vpfx2.jar">
+        <element id="module-output" name="vpfx2" />
+      </element>
+      <element id="directory" name="resources">
+        <element id="dir-copy" path="$PROJECT_DIR$/resources" />
+      </element>
+      <element id="directory" name="libraries">
+        <element id="library" level="project" name="Maven: log4j:log4j:1.2.17" />
+        <element id="library" level="project" name="Maven: net.java.dev.jna:jna:3.5.2" />
+        <element id="library" level="project" name="Maven: net.java.dev.jna:platform:3.5.2" />
+        <element id="library" level="project" name="Maven: uk.co.caprica:vlcj:3.0.1" />
+      </element>
+    </root>
+  </artifact>
+</component>

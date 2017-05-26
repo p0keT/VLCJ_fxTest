@@ -15,14 +15,12 @@ public class RWImageView extends ImageView {
 
     public RWImageView(double width, double height) {
         this.width.addListener(new InvalidationListener() {
-            @Override
             public void invalidated(Observable observable) {
                 updateImageSize();
             }
         });
 
         this.height.addListener(new InvalidationListener() {
-            @Override
             public void invalidated(Observable observable) {
                 updateImageSize();
             }

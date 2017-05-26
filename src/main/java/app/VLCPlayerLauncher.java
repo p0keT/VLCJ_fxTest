@@ -1,5 +1,6 @@
 package app;
 
+import com.sun.jna.NativeLibrary;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -17,6 +18,8 @@ public class VLCPlayerLauncher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        NativeLibrary.addSearchPath("libvlc", "D:\\Program Files\\VLC");
+        NativeLibrary.addSearchPath("libvlccore", "D:\\Program Files\\VLC");
         fxmlLoader = new FXMLLoader();
 
         Parent root = (Parent) fxmlLoader.load(getClass().getResource("/fxml/scene.fxml").openStream());
@@ -28,14 +31,12 @@ public class VLCPlayerLauncher extends Application {
         stage.setScene(scene);
 
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                                    public void handle(WindowEvent event) {
+                                        Platform.exit();
+                                    }
+                                });
 
-            @Override
-            public void handle(WindowEvent event) {
-                Platform.exit();
-            }
-        });
-
-        stage.show();
+                stage.show();
 
         VLCUtil.discover();
     }

@@ -19,6 +19,9 @@ import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.RenderCallback;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,11 @@ public class VideoPlayer extends BorderPane {
      * Canvas, where you'll see video
      */
     protected RWImageView canvas;
+
+    public DirectMediaPlayer getMp() {
+        return mp;
+    }
+
     /**
      * Media player component
      */
@@ -72,7 +80,7 @@ public class VideoPlayer extends BorderPane {
      */
     public VideoPlayer(String title) {
 
-        List<String> arguments = new ArrayList<>();
+        List<String> arguments = new ArrayList<String>();
 
         arguments.add("--no-plugins-cache");
         arguments.add("--no-snapshot-preview");
@@ -89,56 +97,58 @@ public class VideoPlayer extends BorderPane {
         arguments.add("--verbose=2");
 
         canvas = new RWImageView(16, 16);
+
         pixelWriter = canvas.getPixelWriter();
 
 
         MediaPlayerFactory factory = new MediaPlayerFactory(arguments);
 
-        mp = factory.newDirectMediaPlayer(
-                new BufferFormatCallback() {
-                    @Override
-                    public BufferFormat getBufferFormat(final int width, final int height) {
-                        logger.debug(String.format("New buffer format: %dx%d", width, height));
+                mp = factory.newDirectMediaPlayer(
+                        new BufferFormatCallback() {
 
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                canvas.resize(width, height);
-                                pixelWriter = canvas.getPixelWriter();
+                            public BufferFormat getBufferFormat(final int width, final int height) {
+                                logger.debug(String.format("New buffer format: %dx%d", width, height));
+
+                                Platform.runLater(new Runnable() {
+
+                                    public void run() {
+                                        canvas.resize(width, height);
+                                        pixelWriter = canvas.getPixelWriter();
+
+                                    }
+                                });
+
+                                return new RV32BufferFormat(width, height);
                             }
-                        });
+                        },
+                        new RenderCallback() {
 
-                        return new RV32BufferFormat(width, height);
-                    }
-                },
-                new RenderCallback() {
-                    @Override
-                    public void display(DirectMediaPlayer mp, Memory[] memory, final BufferFormat bufferFormat) {
-                        final ByteBuffer byteBuffer = memory[0].getByteBuffer(0, memory[0].size());
+                            public void display(DirectMediaPlayer mp, Memory[] memory, final BufferFormat bufferFormat) {
+                                final ByteBuffer byteBuffer = memory[0].getByteBuffer(0, memory[0].size());
 
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
+                                Platform.runLater(new Runnable() {
 
+                                    public void run() {
+
+                                    }
+                                });
+
+                                Platform.runLater(new Runnable() {
+
+                                    public void run() {
+                                        pixelWriter.setPixels(
+                                                0,
+                                                0,
+                                                bufferFormat.getWidth(),
+                                                bufferFormat.getHeight(),
+                                                byteBgraInstance,
+                                                byteBuffer,
+                                                bufferFormat.getPitches()[0]);
+                                    }
+                                });
                             }
-                        });
-
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                pixelWriter.setPixels(
-                                        0,
-                                        0,
-                                        bufferFormat.getWidth(),
-                                        bufferFormat.getHeight(),
-                                        byteBgraInstance,
-                                        byteBuffer,
-                                        bufferFormat.getPitches()[0]);
-                            }
-                        });
-                    }
-                }
-        );
+                        }
+                );
 
         inner = new StackPane();
         inner.setMinSize(12, 8);
@@ -166,11 +176,11 @@ public class VideoPlayer extends BorderPane {
     public void play(String path) {
         logger.debug("Playing " + path);
         mp.playMedia(path);
+
     }
 
     protected void updateTitle() {
         Platform.runLater(new Runnable() {
-            @Override
             public void run() {
                 cameraHeader.setText(cameraName + " " + soundText);
             }
@@ -203,6 +213,7 @@ public class VideoPlayer extends BorderPane {
      */
     public void setVolume(int volume) {
         mp.setVolume(volume);
+
     }
 
     /**
@@ -264,7 +275,6 @@ public class VideoPlayer extends BorderPane {
             @Override
             public void error(MediaPlayer mediaPlayer) {
                 Platform.runLater(new Runnable() {
-                    @Override
                     public void run() {
                         stop();
                         logger.error(cameraHeader.getText() + ": error while playing video.");
@@ -279,5 +289,6 @@ public class VideoPlayer extends BorderPane {
         };
 
         mp.addMediaPlayerEventListener(mediaPlayerEventListener);
+
     }
 }
